@@ -16,6 +16,7 @@ export default {
 
   methods: {
     success() {
+
       this.$refs.toaster.success('Success ' + new Date().toLocaleTimeString());
     },
 
