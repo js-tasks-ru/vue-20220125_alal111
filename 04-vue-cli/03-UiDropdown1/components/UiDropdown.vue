@@ -1,21 +1,39 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
-    </button>
+  <div>
+    <div class="dropdown" :class="{ 'dropdown_opened': openedDrop }">
+      <button type="button" class="dropdown__toggle" :class="{ 'dropdown__toggle_icon' : hasIcons }" @click.prevent="openedDrop = !openedDrop">
+        <ui-icon v-if="hasIcons && getActive" :icon="getActive.icon" class="dropdown__icon" />
+        <span>{{ getActive?.text || title }}</span>
+      </button>
 
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
-      </button>
+      <div v-show="openedDrop" class="dropdown__menu" role="listbox">
+        <button
+                v-for="(option, i) in options"
+                :key="i"
+                class="dropdown__item"
+                :class="{ 'dropdown__item_icon' : hasIcons }"
+                :value="option.value"
+                @click.prevent="setActive"
+                role="option" type="button">
+          <ui-icon v-if="option.icon" :icon="option.icon" class="dropdown__icon" />
+          {{ option.text }}
+        </button>
+
+      </div>
     </div>
+    <select v-show="false" name="" id="" @change.prevent="setActive">
+      <option
+              v-for="(option, i) in options"
+              :value="option.value"
+              :key="i"
+
+              :selected="modelValue === option.value"
+      >
+      {{ option.text }}
+      </option>
+    </select>
   </div>
+
 </template>
 
 <script>
@@ -23,8 +41,39 @@ import UiIcon from './UiIcon';
 
 export default {
   name: 'UiDropdown',
-
+  props: {
+    options: {
+      type: Array,
+      required: true
+    },
+    modelValue: String,
+    title: {
+      type: String,
+      required: true
+    }
+  },
+  emits: ['update:modelValue'],
   components: { UiIcon },
+  data(){
+    return {
+      openedDrop: false,
+      hasIcons: false
+    }
+  },
+  created(){
+    this.hasIcons = Boolean(this.options.some(el => el.icon));
+  },
+  computed: {
+    getActive(){
+      return this.options.find(el => el.value === this.modelValue)
+    }
+  },
+  methods:{
+    setActive(e){
+      this.openedDrop = false;
+      this.$emit('update:modelValue', e.target.value)
+    }
+  }
 };
 </script>
 
