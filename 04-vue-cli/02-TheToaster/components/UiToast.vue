@@ -1,10 +1,12 @@
 <template>
-    <div class="toast" :class="[`toast_${toast.type}`]">
-
-        <ui-icon class="toast__icon" :icon="toast.icon" />
-        <span>{{ toast.text }}</span>
-
+    <div>
+        <button style="cursor: pointer" @click="$emit('close', toast.id, 0)">x</button>
+        <div class="toast" :class="[`toast_${toast.type}`]">
+            <ui-icon class="toast__icon" :icon="toast.icon" />
+            <span>{{ toast.text }}</span>
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -15,6 +17,7 @@
         components: {
             UiIcon
         },
+        emits: ['close'],
         props: {
             toast: {
                 type: Object,

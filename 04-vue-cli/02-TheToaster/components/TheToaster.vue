@@ -4,6 +4,7 @@
             v-for="toast in messagesList"
             :key="toast.id"
             :toast="toast"
+            @close="hideMessage"
     />
   </div>
 </template>
@@ -42,10 +43,20 @@ export default {
       this.messagesList.push(newMsg);
       this.hideMessage(newMsg.id)
     },
-    hideMessage(id){
+    customToast(text, type, icon, time){
+      const newMsg = {
+        id: new Date(),
+        text,
+        type,
+        icon
+      };
+      this.messagesList.push(newMsg);
+      this.hideMessage(newMsg.id, time)
+    },
+    hideMessage(id, time = 5000){
       setTimeout(()=> {
         this.messagesList = this.messagesList.filter(el => el.id !== id);
-      }, 5000);
+      }, time);
 
     }
   }
