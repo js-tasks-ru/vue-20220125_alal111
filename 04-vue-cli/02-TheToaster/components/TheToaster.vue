@@ -1,5 +1,6 @@
 <template>
   <div class="toasts">
+    {{messagesList}}
     <UiToast
             v-for="toast in messagesList"
             :key="toast.id"
@@ -19,33 +20,23 @@ export default {
   components: { UiToast },
   data(){
     return{
-        messagesList:  []
+        messagesList:  [],
+        toasterID: 0,
     }
   },
   methods: {
     success(text){
-      const newMsg = {
-        id: new Date(),
-        text,
-        type: 'success',
-        icon: 'check-circle'
-      };
-      this.messagesList.push(newMsg);
-      this.hideMessage(newMsg.id)
+      this.addToast(text, 'success', 'check-circle')
     },
     error(text){
-      const newMsg = {
-        id: new Date(),
-        text,
-        type: 'error',
-        icon: 'alert-circle'
-      };
-      this.messagesList.push(newMsg);
-      this.hideMessage(newMsg.id)
+      this.addToast(text, 'error', 'alert-circle')
     },
     customToast(text, type, icon, time){
+      this.addToast(text, type, icon, time)
+    },
+    addToast(text, type, icon, time = 5000){
       const newMsg = {
-        id: new Date(),
+        id: this.toasterID++,
         text,
         type,
         icon
@@ -53,12 +44,13 @@ export default {
       this.messagesList.push(newMsg);
       this.hideMessage(newMsg.id, time)
     },
-    hideMessage(id, time = 5000){
+    hideMessage(id, time){
       setTimeout(()=> {
         this.messagesList = this.messagesList.filter(el => el.id !== id);
       }, time);
 
-    }
+    },
+
   }
 };
 </script>

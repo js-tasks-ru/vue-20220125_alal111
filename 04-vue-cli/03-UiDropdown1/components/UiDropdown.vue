@@ -2,8 +2,8 @@
   <div>
     <div class="dropdown" :class="{ 'dropdown_opened': openedDrop }">
       <button type="button" class="dropdown__toggle" :class="{ 'dropdown__toggle_icon' : hasIcons }" @click.prevent="openedDrop = !openedDrop">
-        <ui-icon v-if="hasIcons && getActive" :icon="getActive.icon" class="dropdown__icon" />
-        <span>{{ getActive?.text || title }}</span>
+        <ui-icon v-if="hasIcons && activeOption" :icon="activeOption.icon" class="dropdown__icon" />
+        <span>{{ activeOption?.text || title }}</span>
       </button>
 
       <div v-show="openedDrop" class="dropdown__menu" role="listbox">
@@ -57,15 +57,14 @@ export default {
   data(){
     return {
       openedDrop: false,
-      hasIcons: false
     }
   },
-  created(){
-    this.hasIcons = Boolean(this.options.some(el => el.icon));
-  },
   computed: {
-    getActive(){
+    activeOption(){
       return this.options.find(el => el.value === this.modelValue)
+    },
+    hasIcons(){
+      return this.options.some(el => el.icon);
     }
   },
   methods:{

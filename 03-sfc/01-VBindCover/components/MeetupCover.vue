@@ -10,6 +10,11 @@ export default {
   props: {
     title: String,
     image: String,
+  },
+  computed: {
+    currentBg(){
+      return this.image ? `url(${this.image})` : 'var(--default-cover)';
+    }
   }
 };
 </script>
@@ -20,7 +25,7 @@ export default {
   background-size: cover;
   background-position: center;
   background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-  v-bind("`url(${image})`"), var(--default-cover);
+  v-bind("currentBg");
    /*background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), var(--default-cover);*/
   display: flex;
   flex-direction: column;
