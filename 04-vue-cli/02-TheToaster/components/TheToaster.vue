@@ -1,24 +1,57 @@
 <template>
   <div class="toasts">
-    <div class="toast toast_success">
-      <ui-icon class="toast__icon" icon="check-circle" />
-      <span>Success Toast Example</span>
-    </div>
-
-    <div class="toast toast_error">
-      <ui-icon class="toast__icon" icon="alert-circle" />
-      <span>Error Toast Example</span>
-    </div>
+    {{messagesList}}
+    <UiToast
+            v-for="toast in messagesList"
+            :key="toast.id"
+            :toast="toast"
+            @close="hideMessage"
+    />
   </div>
 </template>
 
 <script>
-import UiIcon from './UiIcon';
+
+import UiToast from './UiToast';
 
 export default {
   name: 'TheToaster',
 
-  components: { UiIcon },
+  components: { UiToast },
+  data(){
+    return{
+        messagesList:  [],
+        toasterID: 0,
+    }
+  },
+  methods: {
+    success(text){
+      this.addToast(text, 'success', 'check-circle')
+    },
+    error(text){
+      this.addToast(text, 'error', 'alert-circle')
+    },
+    customToast(text, type, icon, time){
+      this.addToast(text, type, icon, time)
+    },
+    addToast(text, type, icon, time = 5000){
+      const newMsg = {
+        id: this.toasterID++,
+        text,
+        type,
+        icon
+      };
+      this.messagesList.push(newMsg);
+      this.hideMessage(newMsg.id, time)
+    },
+    hideMessage(id, time){
+      setTimeout(()=> {
+        this.messagesList = this.messagesList.filter(el => el.id !== id);
+      }, time);
+
+    },
+
+  }
 };
 </script>
 
@@ -41,33 +74,5 @@ export default {
   }
 }
 
-.toast {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: row;
-  align-items: center;
-  padding: 16px;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  font-size: 18px;
-  line-height: 28px;
-  width: auto;
-}
 
-.toast + .toast {
-  margin-top: 20px;
-}
-
-.toast__icon {
-  margin-right: 12px;
-}
-
-.toast.toast_success {
-  color: var(--green);
-}
-
-.toast.toast_error {
-  color: var(--red);
-}
 </style>
