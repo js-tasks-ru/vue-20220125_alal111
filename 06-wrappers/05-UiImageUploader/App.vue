@@ -1,10 +1,13 @@
 <template>
   <div id="app" class="sample container">
     <ui-image-uploader
+            ref="imgInput"
       :preview="image"
       :uploader="uploadImage"
       @remove="image = undefined"
       @upload="image = $event.image"
+      @error="error = $event"
+      @select="selected = $event"
     />
   </div>
 </template>
@@ -20,10 +23,15 @@ export default {
 
   data() {
     return {
-      image: 'https://course-vue.javascript.ru/api/images/1',
+      image: undefined,
       uploadImage,
+      error: null,
+      selected: null
     };
   },
+  methods: {
+
+  }
 };
 </script>
 
