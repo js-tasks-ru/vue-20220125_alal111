@@ -7,6 +7,7 @@
       'input-group_icon-right': $slots['right-icon'],
     }"
   >
+
     <div v-if="$slots['left-icon']" class="input-group__icon">
       <slot name="left-icon" />
     </div>
