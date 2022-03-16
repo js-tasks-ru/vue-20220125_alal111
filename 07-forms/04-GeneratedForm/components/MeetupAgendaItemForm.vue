@@ -1,36 +1,42 @@
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click.prevent="$emit('remove')">
       <ui-icon icon="trash" />
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" v-model="localAgendaItem.type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input type="time" placeholder="00:00" name="startsAt" v-model="timeStartValue" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input type="time" placeholder="00:00" name="endsAt" v-model="localAgendaItem.endsAt" />
         </ui-form-group>
       </div>
     </div>
+    <ui-form-group
+            v-for="(value, name) in $options.agendaItemFormSchemas[localAgendaItem.type]"
+            :key="name"
+            :label="value.label">
+      <component
 
-    <ui-form-group label="Заголовок">
-      <ui-input name="title" />
+              :is="value.component"
+              v-bind="{...value.props}"
+              v-model="localAgendaItem[name]"
+      ></component>
     </ui-form-group>
-    <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
-    </ui-form-group>
+
   </fieldset>
 </template>
 
 <script>
+  import moment from 'moment'
 import UiIcon from './UiIcon';
 import UiFormGroup from './UiFormGroup';
 import UiInput from './UiInput';
@@ -165,6 +171,35 @@ export default {
       required: true,
     },
   },
+  emits: ['update:agendaItem', 'remove'],
+  data(){
+    return{
+      localAgendaItem: {...this.agendaItem}
+    }
+  },
+  watch: {
+    localAgendaItem: {
+      deep: true,
+      handler(newVal){
+        this.$emit('update:agendaItem', newVal)
+      }
+    },
+  },
+  computed: {
+    timeStartValue: {
+      get(){
+        return this.localAgendaItem.startsAt;
+      },
+      set(val){
+        const dStart = moment(`1995-12-17T${this.localAgendaItem.startsAt}`);
+        let dEnd = moment(`1995-12-17T${this.localAgendaItem.endsAt}`);
+        const diffM = dEnd.diff(dStart, 'minutes');
+        const finalTime = moment(`1995-12-17T${val}`).add(diffM, 'minutes');
+        this.localAgendaItem.endsAt = finalTime.format('HH:mm');
+        this.localAgendaItem.startsAt = val;
+      }
+    },
+  }
 };
 </script>
 
