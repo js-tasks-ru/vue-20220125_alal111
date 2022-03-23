@@ -33,6 +33,7 @@ export default {
 
   methods: {
     handleSubmit(meetup) {
+      console.log(meetup);
       this.meetup = meetup;
       alert(JSON.stringify(this.meetup, null, 2));
     },
